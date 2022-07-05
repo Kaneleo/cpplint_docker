@@ -1,0 +1,12 @@
+FROM python:3.9
+
+
+RUN adduser cpplint
+RUN apt-get update && apt-get install -y clang-format
+USER cpplint
+WORKDIR /home/cpplint
+ENV PATH="/home/cpplint/.local/bin:${PATH}"
+
+RUN pip3 install cpplint cclint --disable-pip-version-check
+
+CMD cclint --exclude=*build* --recursive . 
