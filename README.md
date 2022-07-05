@@ -1,4 +1,4 @@
-# cpplint
+# cpplint_docker
 
 This is a project offering a minimal docker environment for linting C++ projects
 with cpplint
