@@ -9,4 +9,4 @@ ENV PATH="/home/cpplint/.local/bin:${PATH}"
 
 RUN pip3 install cpplint cclint --disable-pip-version-check
 
-CMD cclint --exclude=*build* --recursive . 
+CMD cclint --recursive . 
