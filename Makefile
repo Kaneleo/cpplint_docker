@@ -59,3 +59,7 @@ lintfix: build_check check_CPP_PROJECT_DIRECTORY ## Attempts to fix linting erro
 lintfix_simulate: build_check check_CPP_PROJECT_DIRECTORY
 	@echo "Running clang-format on: ${CPP_PROJECT_DIRECTORY}"
 	@docker run --entrypoint "" -v "${CPP_PROJECT_DIRECTORY}:${CPP_PROJECT_DIRECTORY}" cpplint:latest /bin/bash -c 'cd "${CPP_PROJECT_DIRECTORY}" && ${LINTFIX_SIMULATE_COMMAND}'
+
+.PHONY: cpplint_demo
+lint_demo: ## show a demo with provided hello_world project
+	make lint CPP_PROJECT_DIRECTORY="$$(realpath ./hello_world)"
