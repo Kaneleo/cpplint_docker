@@ -33,7 +33,7 @@ clean:
 	docker rmi ${TAG} --force 2> /dev/null
 
 .PHONY: build
-build: clean
+build: clean ## build the cpplint docker image
 	docker build -t "cpplint:latest" -f Dockerfile.cpplint .
 
 .PHONY: build_check
@@ -47,15 +47,15 @@ check_CPP_PROJECT_DIRECTORY:
 	@[ "${CPP_PROJECT_DIRECTORY}" ] || ( echo "CPP_PROJECT_DIRECTORY is not set. You must provide a project directory. make <target> CPP_PROJECT_DIRECTORY=<absolute path to cpp source code>"; exit 1 )
 
 .PHONY: lint
-lint: build_check check_CPP_PROJECT_DIRECTORY 
-	@docker run -v ${CPP_PROJECT_DIRECTORY}:/home/cpplint/$$(basename ${CPP_PROJECT_DIRECTORY}) cpplint:latest
+lint: build_check ## lint provided source directory call with: make cpplint CPP_PROJECT_DIRECTORY=/absolute/path/to/source
+	docker run -v "${CPP_PROJECT_DIRECTORY}:/home/cpplint/$$(basename ${CPP_PROJECT_DIRECTORY})" cpplint:latest
 
 .PHONY: lintfix
-lintfix: build_check check_CPP_PROJECT_DIRECTORY
+lintfix: build_check check_CPP_PROJECT_DIRECTORY ## Attempts to fix linting errors using clang-format on the provided source directory
 	@echo "Running clang-format on: ${CPP_PROJECT_DIRECTORY}"
-	@docker run --entrypoint "" -v ${CPP_PROJECT_DIRECTORY}:${CPP_PROJECT_DIRECTORY} cpplint:latest /bin/bash -c 'cd ${CPP_PROJECT_DIRECTORY} && ${LINTFIX_COMMAND}'
+	docker run --entrypoint "" -v "${CPP_PROJECT_DIRECTORY}:${CPP_PROJECT_DIRECTORY}" cpplint:latest /bin/bash -c 'cd "${CPP_PROJECT_DIRECTORY}" && ${LINTFIX_COMMAND}'
 
 .PHONY: lintfix_simulate
 lintfix_simulate: build_check check_CPP_PROJECT_DIRECTORY
 	@echo "Running clang-format on: ${CPP_PROJECT_DIRECTORY}"
-	@docker run --entrypoint "" -v ${CPP_PROJECT_DIRECTORY}:${CPP_PROJECT_DIRECTORY} cpplint:latest /bin/bash -c 'cd ${CPP_PROJECT_DIRECTORY} && ${LINTFIX_SIMULATE_COMMAND}'
+	@docker run --entrypoint "" -v "${CPP_PROJECT_DIRECTORY}:${CPP_PROJECT_DIRECTORY}" cpplint:latest /bin/bash -c 'cd "${CPP_PROJECT_DIRECTORY}" && ${LINTFIX_SIMULATE_COMMAND}'
