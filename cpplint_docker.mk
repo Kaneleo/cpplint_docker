@@ -1,4 +1,8 @@
 
+ifndef cpplint_docker
+
+cpplint_docker:=""
+
 .PHONY: lintfix 
 lintfix: ## Automated lint fixing of sumo_if_ros source code using clang-format
 	cd cpplint_docker && \
@@ -16,3 +20,4 @@ lint: ## Print out lint report to console
     make lint CPP_PROJECT_DIRECTORY=$$(realpath ${ROOT_DIR}/${PROJECT}) | \
 	tee ${ROOT_DIR}/${PROJECT}/${PROJECT}_lint_report.log; exit $$PIPESTATUS
 
+endif
