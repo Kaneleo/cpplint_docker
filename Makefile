@@ -34,20 +34,18 @@ clean:
 
 .PHONY: build
 build: clean ## build the cpplint docker image
-	docker build -t "cpplint:latest" -f Dockerfile.cpplint .
+	docker build --network host -t "cpplint:latest" -f Dockerfile.cpplint .
 
-.PHONY: build_check
-build_check:
-	@[ -n "$$(docker images -q ${TAG} 2> /dev/null)" ] && \
-          echo "" || \
-          make build
+.PHONY: build_fast
+build_fast: ## Build docker context only if it does not already exist
+	@[ ! -n "$$(docker images -q ${TAG})" ] && make build || true
 
 .PHONY: check_CPP_PROJECT_DIRECTORY
 check_CPP_PROJECT_DIRECTORY:
 	@[ "${CPP_PROJECT_DIRECTORY}" ] || ( echo "CPP_PROJECT_DIRECTORY is not set. You must provide a project directory. make <target> CPP_PROJECT_DIRECTORY=<absolute path to cpp source code>"; exit 1 )
 
 .PHONY: lint
-lint: build_check ## lint provided source directory call with: make cpplint CPP_PROJECT_DIRECTORY=/absolute/path/to/source
+lint: build_fast ## lint provided source directory call with: make cpplint CPP_PROJECT_DIRECTORY=/absolute/path/to/source
 	docker run -v "${CPP_PROJECT_DIRECTORY}:/home/cpplint/$$(basename ${CPP_PROJECT_DIRECTORY})" cpplint:latest
 
 .PHONY: lintfix
