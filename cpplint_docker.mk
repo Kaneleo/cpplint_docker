@@ -1,23 +1,21 @@
 
-ifndef cpplint_docker
+ifeq ($(filter cpplint_docker.mk, $(notdir $(MAKEFILE_LIST))), cpplint_docker.mk)
 
-cpplint_docker:=""
+CPPLINT_DOCKER_MAKEFILE_PATH:=$(strip $(shell realpath "$(shell dirname "$(lastword $(MAKEFILE_LIST))")"))
 
 .PHONY: lintfix 
-lintfix: ## Automated lint fixing of sumo_if_ros source code using clang-format
-	cd cpplint_docker && \
-    make lintfix CPP_PROJECT_DIRECTORY=$(realpath ${ROOT_DIR}/${PROJECT})
+lintfix: ## Attempts to fix linting errors using clang-format on the provided source directory
+	cd "${CPPLINT_DOCKER_MAKEFILE_PATH}" && \
+    make _lintfix
 
 .PHONY: lintfix_simulate
 lintfix_simulate:
-	cd cpplint_docker && \
-    make lintfix_simulate CPP_PROJECT_DIRECTORY=$(realpath ${ROOT_DIR}/${PROJECT})
+	cd "${CPPLINT_DOCKER_MAKEFILE_PATH}" && \
+    make _lintfix_simulate
 
 .PHONY: lint
-lint: ## Print out lint report to console
-	find . -name "**lint_report.log" -exec rm -rf {} \;
-	cd cpplint_docker && \
-    make lint CPP_PROJECT_DIRECTORY=$$(realpath ${ROOT_DIR}/${PROJECT}) | \
-	tee ${ROOT_DIR}/${PROJECT}/${PROJECT}_lint_report.log; exit $$PIPESTATUS
+lint: ## lint provided source directory call with: make lint CPP_PROJECT_DIRECTORY=/absolute/path/to/source
+	cd "${CPPLINT_DOCKER_MAKEFILE_PATH}" && \
+    make _lint
 
 endif
