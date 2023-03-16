@@ -48,7 +48,7 @@ check_CPP_PROJECT_DIRECTORY:
 
 .PHONY: lint
 _lint: check_CPP_PROJECT_DIRECTORY build_fast
-	docker run -v "${CPP_PROJECT_DIRECTORY}:/tmp/cpp_source_directory" ${TAG} | \
+	docker run -v "${CPP_PROJECT_DIRECTORY}:/tmp/cpp_source_directory" ${TAG} |& \
     tee "${CPP_PROJECT_DIRECTORY}/lint_report.log"; EXIT_CODE=$$PIPESTATUS; \
     BASE_DIR=$$(basename "${CPP_PROJECT_DIRECTORY}") && \
     mv "${CPP_PROJECT_DIRECTORY}/lint_report.log" "${CPP_PROJECT_DIRECTORY}/$${BASE_DIR}_lint_report.log" && \
